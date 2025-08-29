@@ -28,24 +28,24 @@ export default function Page() {
   }, [genre]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 text-gray-900 p-8 relative">
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 text-gray-900 px-4 py-2 relative">
       {/* Header */}
-      <header className="text-center mb-4">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">
+      <header className="text-center mb-1">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">
           🎵 Focus Music
         </h1>
-        <p className="text-gray-500 text-sm mt-2">Stay focused with curated tracks</p>
+        <p className="text-gray-500 text-xs mt-1">Stay focused with curated tracks</p>
       </header>
 
       {/* Genre Selector */}
-      <div className="flex justify-center mb-10">
-        <div className="bg-white/60 backdrop-blur-md rounded-2xl shadow-sm px-6 py-3">
+      <div className="flex justify-center mb-4">
+        <div className="bg-white/60 backdrop-blur-md rounded-xl shadow-sm px-4 py-2">
           <GenreChips onSelect={(g) => setGenre(g)} />
         </div>
       </div>
 
       {/* Songs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-36">
         {loading
           ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
           : songs.length > 0
@@ -67,7 +67,7 @@ export default function Page() {
 
       {/* Mini Player */}
       {currentSong && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-[90%] sm:w-[500px] z-50">
+        <div className="fixed bottom-1 left-1/2 transform -translate-x-1/2 w-[90%] sm:w-[500px] z-50">
           <MiniPlayer song={currentSong} />
         </div>
       )}

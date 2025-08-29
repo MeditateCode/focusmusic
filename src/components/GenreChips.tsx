@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 
-const GENRES = ["Ambient", "Classical", "Lo-fi", "Jazz", "Nature"];
+const GENRES = ["Ambient", "Classical", "Lofi", "Jazz", "Nature"];
 
 export default function GenreChips({ onSelect }: { onSelect: (genre: string) => void }) {
   const [active, setActive] = useState("Ambient");
 
   return (
-    <div className="flex gap-3 flex-wrap justify-center mt-4">
+    <div className="flex gap-3 flex-wrap justify-center my-2">
       {GENRES.map((g) => {
         const isActive = active === g;
         return (
