@@ -9,18 +9,21 @@ export default function Page() {
   const [genre, setGenre] = useState("ambient");
   const [loading, setLoading] = useState(false);
   const [songs, setSongs] = useState<any[]>([]);
-  const [currentSong, setCurrentSong] = useState<any | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [page, setPage] = useState(1);
 
-  // Fetch songs when genre or page changes
+  // Fetch songs
   useEffect(() => {
     const fetchSongs = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/jamendo?genre=${genre}&page=${page}&limit=12`);
+        const res = await fetch(
+          `/api/jamendo?genre=${genre}&page=${page}&limit=12`
+        );
         const data = await res.json();
         if (page === 1) {
           setSongs(data.results);
+          setCurrentIndex(null); // reset when genre changes
         } else {
           setSongs((prev) => [...prev, ...data.results]);
         }
@@ -33,7 +36,7 @@ export default function Page() {
     fetchSongs();
   }, [genre, page]);
 
-  // Reset songs when genre changes
+  // Change genre
   const handleGenreChange = (g: string) => {
     setGenre(g);
     setPage(1);
@@ -46,7 +49,9 @@ export default function Page() {
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent drop-shadow-sm">
           🎵 Focus Music
         </h1>
-        <p className="text-gray-500 text-xs mt-1">Stay focused with curated tracks</p>
+        <p className="text-gray-500 text-xs mt-1">
+          Stay focused with curated tracks
+        </p>
       </header>
 
       {/* Genre Selector */}
@@ -61,10 +66,10 @@ export default function Page() {
         {loading && page === 1
           ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
           : songs.length > 0
-          ? songs.map((s) => (
+          ? songs.map((s, idx) => (
               <div
                 key={s.id}
-                onClick={() => setCurrentSong(s)}
+                onClick={() => setCurrentIndex(idx)}
                 className="hover:scale-[1.03] transition-transform cursor-pointer"
               >
                 <SongCard title={s.title} artist={s.artist} cover={s.cover} />
@@ -77,7 +82,7 @@ export default function Page() {
           )}
       </div>
 
-      {/* Load More Button (natural flow, bottom-right) */}
+      {/* Load More */}
       {songs.length > 0 && (
         <div className="flex justify-end mt-6 mb-24">
           <button
@@ -91,9 +96,23 @@ export default function Page() {
       )}
 
       {/* Mini Player */}
-      {currentSong && (
-        <div className="fixed bottom-1 left-1/2 transform -translate-x-1/2 w-[90%] sm:w-[500px] z-50">
-          <MiniPlayer song={currentSong} />
+      {currentIndex !== null && (
+        <div
+          className="fixed bottom-1 left-1/2 transform -translate-x-1/2 w-[90%] sm:w-[500px] z-50"
+        >
+          <MiniPlayer
+            song={songs[currentIndex]} // ✅ just pass current song
+            onNext={() =>
+              setCurrentIndex((prev) =>
+                prev !== null && prev < songs.length - 1 ? prev + 1 : 0
+              )
+            }
+            onPrev={() =>
+              setCurrentIndex((prev) =>
+                prev !== null && prev > 0 ? prev - 1 : songs.length - 1
+              )
+            }
+          />
         </div>
       )}
     </main>
