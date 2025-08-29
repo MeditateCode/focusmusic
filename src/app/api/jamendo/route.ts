@@ -25,11 +25,13 @@ export async function GET(req: Request) {
         const offset = (page - 1) * limit;
         const tags = TAGS_BY_GENRE[genre] ?? TAGS_BY_GENRE.ambient;
 
+        const randomOffset = Math.floor(Math.random() * 500); // adjust max range
         const url =
             `${BASE}?client_id=${CLIENT_ID}` +
-            `&format=json&limit=${limit}&offset=${offset}` +
-            `&tags=${encodeURIComponent(genre)}` + // keep it simple: ambient, classical, etc.
+            `&format=json&limit=${limit}&offset=${randomOffset}` +
+            `&tags=${encodeURIComponent(genre)}` +
             `&include=musicinfo&audioformat=mp32&order=popularity_total`;
+
 
 
 

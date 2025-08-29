@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const GENRES = ["Ambient", "Classical", "Lofi", "Jazz", "Nature"];
+const GENRES = ["Ambient", "Classical", "Lofi", "Jazz", "Nature", "Instrumental", "Piano"];
 
 export default function GenreChips({ onSelect }: { onSelect: (genre: string) => void }) {
   const [active, setActive] = useState("Ambient");

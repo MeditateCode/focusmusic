@@ -10,22 +10,34 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [songs, setSongs] = useState<any[]>([]);
   const [currentSong, setCurrentSong] = useState<any | null>(null);
+  const [page, setPage] = useState(1);
 
+  // Fetch songs when genre or page changes
   useEffect(() => {
     const fetchSongs = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/jamendo?genre=${genre}&page=1&limit=12`);
+        const res = await fetch(`/api/jamendo?genre=${genre}&page=${page}&limit=12`);
         const data = await res.json();
-        setSongs(data.results);
+        if (page === 1) {
+          setSongs(data.results);
+        } else {
+          setSongs((prev) => [...prev, ...data.results]);
+        }
       } catch (err) {
-        setSongs([]);
+        if (page === 1) setSongs([]);
       } finally {
         setLoading(false);
       }
     };
     fetchSongs();
-  }, [genre]);
+  }, [genre, page]);
+
+  // Reset songs when genre changes
+  const handleGenreChange = (g: string) => {
+    setGenre(g);
+    setPage(1);
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 text-gray-900 px-4 py-2 relative">
@@ -40,13 +52,13 @@ export default function Page() {
       {/* Genre Selector */}
       <div className="flex justify-center mb-4">
         <div className="bg-white/60 backdrop-blur-md rounded-xl shadow-sm px-4 py-2">
-          <GenreChips onSelect={(g) => setGenre(g)} />
+          <GenreChips onSelect={handleGenreChange} />
         </div>
       </div>
 
       {/* Songs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-36">
-        {loading
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {loading && page === 1
           ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
           : songs.length > 0
           ? songs.map((s) => (
@@ -64,6 +76,19 @@ export default function Page() {
             </p>
           )}
       </div>
+
+      {/* Load More Button (natural flow, bottom-right) */}
+      {songs.length > 0 && (
+        <div className="flex justify-end mt-6 mb-24">
+          <button
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={loading}
+            className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-500 text-white rounded-lg shadow-md text-sm hover:opacity-90 transition disabled:opacity-50"
+          >
+            {loading ? "Loading..." : "Load More"}
+          </button>
+        </div>
+      )}
 
       {/* Mini Player */}
       {currentSong && (
